@@ -2,9 +2,10 @@
 '''Contains a Flask web application API.
 '''
 import os
-from api.v1.views import app_views
-from flask import jsonify
+from flask import Flask, jsonify
+from flask_cors import CORS
 
+from models import storage
 # Define a route /status on the object app_views that returns a JSON: "status": "OK"
 app = Flask(__name__)
 

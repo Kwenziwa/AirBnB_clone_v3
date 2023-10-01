@@ -1,37 +1,62 @@
 #!/usr/bin/python3
-'''
-Module that define the index
-'''
-from api.v1.views import app_views
+"""
+Index model holds the endpoint (route)
+"""
+from api.v1.views import app_views, storage
 from flask import jsonify
-from models import storage
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.place import Place
-from models.review import Review
-from models.user import User
 
 
-@app_views.route('/status')
+@app_views.route('/status/')
 def status():
-    '''
-    Method that return the status of api
-    '''
+    """Example endpoint returns status
+    returns the current status of the API
+    ---
+    definitions:
+      status:
+        type: object
+      Color:
+        type: string
+      items:
+        $ref: '#/definitions/Color'
+
+    responses:
+      200:
+        description: dictionary with 'status' as key and 'ok' as keyvalue
+        schema:
+          $ref: '#/definitions/State'
+        examples:
+            {"status": "OK"}
+    """
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
+@app_views.route('/stats/')
 def stats():
-    '''
-    Retrieves the number of each object type
-    '''
-    stats_dict = {
-        "amenities": storage.count(Amenity),
-        "cities": storage.count(City),
-        "places": storage.count(Place),
-        "reviews": storage.count(Review),
-        "states": storage.count(State),
-        "users": storage.count(User)
-    }
-    return jsonify(stats_dict)
+    """Example endpoint returns stats
+    returns a number of objects of each class
+    ---
+    definitions:
+      status:
+        type: object
+      Color:
+        type: string
+      items:
+        $ref: '#/definitions/Color'
+
+    responses:
+      200:
+        description: dictionary with 'status' as key and 'ok' as keyvalue
+        schema:
+          $ref: '#/definitions/State'
+        examples:
+           { "amenities": 47, "cities": 36, "places": 154, "reviews": 718,
+             "states": 27, "users": 31}
+    """
+    models_available = {"User": "users",
+                        "Amenity": "amenities", "City": "cities",
+                        "Place": "places", "Review": "reviews",
+                        "State": "states"}
+    stats = {}
+    for cls in models_available.keys():
+        stats[models_available[cls]] = storage.count(cls)
+    return jsonify(stats)

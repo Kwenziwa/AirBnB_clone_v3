@@ -28,3 +28,4 @@ def stats():
         count = storage.count(value)
         objs[key] = count
     return jsonify(objs)
+    

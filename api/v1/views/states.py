@@ -22,6 +22,7 @@ def create_state(data):
     storage.save()
     return new_state
 
+
 def validate_json():
     """Validate that the request data is in JSON format."""
     data = request.get_json()

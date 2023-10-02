@@ -35,8 +35,8 @@ def get_cities(state_id=None, city_id=None):
     if state_id:
         state = storage.get(State, state_id)
         if state:
-            cities = list(map(lambda x: x.to_dict(), state.cities))
-            return jsonify(cities)
+            mycities = list(map(lambda x: x.to_dict(), state.cities))
+            return jsonify(mycities)
     elif city_id:
         city = storage.get(City, city_id)
         if city:
@@ -48,9 +48,9 @@ def remove_city(state_id=None, city_id=None):
     '''Removes a city with the given id.
     '''
     if city_id:
-        city = storage.get(City, city_id)
-        if city:
-            storage.delete(city)
+        mycity = storage.get(City, city_id)
+        if mycity:
+            storage.delete(mycity)
             if storage_t != "db":
                 for place in storage.all(Place).values():
                     if place.city_id == city_id:
@@ -66,18 +66,18 @@ def remove_city(state_id=None, city_id=None):
 def add_city(state_id=None, city_id=None):
     '''Adds a new city.
     '''
-    state = storage.get(State, state_id)
-    if not state:
+    mystate = storage.get(State, state_id)
+    if not mystate:
         raise NotFound()
-    data = request.get_json()
-    if type(data) is not dict:
+    mydata = request.get_json()
+    if type(mydata) is not dict:
         raise BadRequest(description='Not a JSON')
-    if 'name' not in data:
+    if 'name' not in mydata:
         raise BadRequest(description='Missing name')
-    data['state_id'] = state_id
-    city = City(**data)
-    city.save()
-    return jsonify(city.to_dict()), 201
+    mydata['state_id'] = state_id
+    mycity = City(**mydata)
+    mycity.save()
+    return jsonify(mycity.to_dict()), 201
 
 
 def update_city(state_id=None, city_id=None):
@@ -85,14 +85,14 @@ def update_city(state_id=None, city_id=None):
     '''
     xkeys = ('id', 'state_id', 'created_at', 'updated_at')
     if city_id:
-        city = storage.get(City, city_id)
-        if city:
-            data = request.get_json()
-            if type(data) is not dict:
+        mycity = storage.get(City, city_id)
+        if mycity:
+            mydata = request.get_json()
+            if type(mydata) is not dict:
                 raise BadRequest(description='Not a JSON')
-            for key, value in data.items():
+            for key, value in mydata.items():
                 if key not in xkeys:
-                    setattr(city, key, value)
-            city.save()
-            return jsonify(city.to_dict()), 200
+                    setattr(mycity, key, value)
+            mycity.save()
+            return jsonify(mycity.to_dict()), 200
     raise NotFound()

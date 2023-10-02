@@ -9,10 +9,10 @@ from models.state import State
 
 def get_state_or_abort(state_id):
     """Retrieve a State object by ID or abort with 404 if not found"""
-    state = storage.get(State, state_id)
-    if state is None:
+    my_state = storage.get(State, state_id)
+    if my_state is None:
         abort(404)
-    return state
+    return my_state
 
 
 def create_state(data):
@@ -25,10 +25,10 @@ def create_state(data):
 
 def validate_json():
     """Validate that the request data is in JSON format."""
-    data = request.get_json()
-    if not data:
+    mydata = request.get_json()
+    if not mydata:
         abort(400, "Not a JSON")
-    return data
+    return mydata
 
 
 @app_views.route('/states', strict_slashes=False, methods=['GET', 'POST'])
@@ -43,10 +43,10 @@ def states():
 
     if request.method == 'POST':
         # Add a State to the list
-        data = validate_json()
-        if "name" not in data:
+        mydata = validate_json()
+        if "name" not in mydata:
             abort(400, "Missing name")
-        new_state = create_state(data)
+        new_state = create_state(mydata)
         return make_response(jsonify(new_state.to_dict()), 201)
 
 
@@ -55,24 +55,24 @@ def states():
 def state_with_id(state_id=None):
     """Route for manipulating a specific State object"""
 
-    state = get_state_or_abort(state_id)
+    mystate = get_state_or_abort(state_id)
 
     if request.method == 'GET':
         # Get a specific state by id
-        return jsonify(state.to_dict())
+        return jsonify(mystate.to_dict())
 
     if request.method == 'DELETE':
         # Delete a specific state by id
-        storage.delete(state)
+        storage.delete(mystate)
         storage.save()
         return make_response(jsonify({}), 200)
 
     if request.method == 'PUT':
         # Update a specific state by id
-        data = validate_json()
-        for key, value in data.items():
+        mydata = validate_json()
+        for key, value in mydata.items():
             if key not in ["id", "created_at", "updated_at"]:
-                setattr(state, key, value)
+                setattr(mystate, key, value)
         storage.save()
-        return make_response(jsonify(state.to_dict()), 200)
+        return make_response(jsonify(mystate.to_dict()), 200)
     
